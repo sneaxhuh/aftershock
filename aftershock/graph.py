@@ -2,14 +2,16 @@
 
 import json
 import os
+import re
 import time
 import uuid
-import re
 from pathlib import Path
+
 from falkordb import FalkorDB
+
 from aftershock.domain import Action
-from aftershock.knowledge import Knowledge, BFS_QUERY
 from aftershock.embeddings import Embeddings
+from aftershock.knowledge import BFS_QUERY, Knowledge
 from aftershock.provenance import Provenance
 
 FIXTURE = json.loads(
@@ -249,7 +251,10 @@ SET c.sequence=c.sequence+1 CREATE (r)-[:HAS_EVENT]->(e:Event {id:$id,sequence:c
 
     def search_memory(self):
         rows = self.q(
-            "CALL db.idx.fulltext.queryNodes('Incident','checkout recommendations') YIELD node RETURN node.id,node.action,node.outcome ORDER BY node.recorded_at DESC LIMIT 5"
+            "CALL db.idx.fulltext.queryNodes('Incident','checkout recommendations') YIELD node "
+            "WHERE node.outcome IS NOT NULL "
+            "RETURN node.id,node.action,node.outcome "
+            "ORDER BY node.recorded_at DESC,node.id ASC LIMIT 5"
         )
         return [
             {

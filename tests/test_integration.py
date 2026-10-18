@@ -4,7 +4,9 @@ import asyncio
 import os
 import time
 import uuid
+
 import pytest
+
 from aftershock.controller import Controller
 from aftershock.graph import GraphStore
 
@@ -39,6 +41,34 @@ def environment(monkeypatch):
 
 async def finish(controller):
     await asyncio.wait_for(controller.pipeline, timeout=45)
+
+
+def test_completed_memory_remains_visible_after_abandoned_incidents_and_restart(
+    environment,
+):
+    store = environment
+    run = store.create_run("Memory retrieval regression")
+    for number in range(1, 11):
+        run["incident"] = number
+        store.incident(run)
+        if number in (1, 2, 10):
+            store.remember(
+                run,
+                {
+                    "action": "none" if number == 2 else "enable_fallback",
+                    "status": "unresolved" if number == 2 else "resolved",
+                    "required": False,
+                    "evidence_ids": ["policy-recommendations"],
+                },
+            )
+
+    expected = [f"{run['id']}_{number}" for number in (10, 2, 1)]
+    for reader in (store, GraphStore(store.base_prefix, store.tenant)):
+        memory = reader.search_memory()
+        assert [item["incident"] for item in memory] == expected
+        assert all(item["outcome"] for item in memory)
+        assert memory[0]["outcome"]["status"] == "resolved"
+        assert memory[1]["outcome"]["status"] == "unresolved"
 
 
 async def test_complete_incident_memory_and_changed_policy(environment):

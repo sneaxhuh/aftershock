@@ -391,7 +391,7 @@ function App() {
       api(`/runs/${run.id}/memory`)
         .then(setMemory)
         .catch((e) => setError(e.message));
-  }, [tab, run?.status]);
+  }, [tab, run?.status, run?.id]);
   useEffect(() => {
     if (tab === "memory" && run)
       api(`/runs/${run.id}/conversation`)
