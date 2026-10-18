@@ -1,0 +1,69 @@
+name: aftershock
+x-sandbox: &sandbox
+  build:
+    context: .
+    target: sandbox
+  init: true
+  networks: [private]
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9000/health')"]
+    interval: 5s
+    timeout: 3s
+    retries: 15
+services:
+  falkordb:
+    image: falkordb/falkordb:v4.18.0@sha256:58a95a33d591b25648bbb13268a23329aa39e70b4cbeff0752c65f8b4beba6db
+    environment:
+      REDIS_ARGS: "--appendonly yes --appendfsync everysec --save 60 1"
+      FALKORDB_DATA_PATH: /data
+      BROWSER: "0"
+    volumes: ["graph-data:/data"]
+    networks: [private]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  main:
+    <<: *sandbox
+    volumes: ["main-data:/data"]
+  rollback:
+    <<: *sandbox
+    volumes: ["rollback-data:/data"]
+  restart:
+    <<: *sandbox
+    volumes: ["restart-data:/data"]
+  fallback:
+    <<: *sandbox
+    volumes: ["fallback-data:/data"]
+  api:
+    build:
+      context: .
+      target: api
+    init: true
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      FALKOR_HOST: falkordb
+      FALKOR_PORT: 6379
+      AGENT_MODE: ${AGENT_MODE:-live}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+    ports: ["127.0.0.1:8000:8000"]
+    networks: [private, outbound]
+    depends_on:
+      falkordb: {condition: service_healthy}
+      main: {condition: service_healthy}
+      rollback: {condition: service_healthy}
+      restart: {condition: service_healthy}
+      fallback: {condition: service_healthy}
+networks:
+  private:
+    internal: true
+  outbound: {}
+volumes:
+  graph-data:
+  main-data:
+  rollback-data:
+  restart-data:
+  fallback-data:

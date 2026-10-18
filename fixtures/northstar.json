@@ -1,0 +1,429 @@
+{
+  "checkout": {
+    "label": "Service",
+    "name": "Checkout",
+    "version": 2,
+    "x": 100,
+    "y": 100
+  },
+  "recommendations": {
+    "label": "Service",
+    "name": "Recommendations",
+    "fault": false,
+    "x": 380,
+    "y": 30
+  },
+  "inventory": {
+    "label": "Service",
+    "name": "Inventory",
+    "x": 380,
+    "y": 190
+  },
+  "billing": {
+    "label": "Service",
+    "name": "Billing",
+    "x": 100,
+    "y": 330
+  },
+  "data": {
+    "label": "Service",
+    "name": "Shared data",
+    "x": 650,
+    "y": 290
+  },
+  "schema-v2": {
+    "label": "Schema",
+    "name": "Order schema v2",
+    "version": 2,
+    "x": 650,
+    "y": 440
+  },
+  "schema-v1": {
+    "label": "Schema",
+    "name": "Legacy schema v1",
+    "version": 1,
+    "x": 380,
+    "y": 460
+  },
+  "shopping": {
+    "label": "Workflow",
+    "name": "Place an order",
+    "critical": true,
+    "x": -170,
+    "y": 100
+  },
+  "invoicing": {
+    "label": "Workflow",
+    "name": "Issue an invoice",
+    "critical": true,
+    "x": -170,
+    "y": 330
+  },
+  "shoppers": {
+    "label": "CustomerGroup",
+    "name": "Retail customers",
+    "x": -410,
+    "y": 100
+  },
+  "merchants": {
+    "label": "CustomerGroup",
+    "name": "Merchant partners",
+    "x": -410,
+    "y": 330
+  },
+  "policy-recommendations": {
+    "label": "Policy",
+    "name": "Recommendations optional",
+    "required": false,
+    "x": 650,
+    "y": 30
+  },
+  "maya": {
+    "label": "Person",
+    "name": "Maya \u00b7 Commerce",
+    "x": 100,
+    "y": -80
+  },
+  "leo": {
+    "label": "Person",
+    "name": "Leo \u00b7 Platform",
+    "x": 650,
+    "y": 150
+  },
+  "runbook-checkout": {
+    "label": "Document",
+    "name": "Checkout incident runbook",
+    "text": "Checkout recommendations timeout: inspect dependencies and schema before rollback. Optional recommendations may use graceful fallback. Shared data restarts interrupt billing.",
+    "x": 100,
+    "y": -240
+  },
+  "checkout-recommendations": {
+    "from": "checkout",
+    "to": "recommendations",
+    "type": "DEPENDS_ON",
+    "required": false
+  },
+  "checkout-inventory": {
+    "from": "checkout",
+    "to": "inventory",
+    "type": "DEPENDS_ON",
+    "required": true
+  },
+  "checkout-data": {
+    "from": "checkout",
+    "to": "data",
+    "type": "DEPENDS_ON",
+    "required": true
+  },
+  "billing-data": {
+    "from": "billing",
+    "to": "data",
+    "type": "DEPENDS_ON",
+    "required": true
+  },
+  "data-schema-v2": {
+    "from": "data",
+    "to": "schema-v2",
+    "type": "SUPPORTS"
+  },
+  "checkout-schema-v2": {
+    "from": "checkout",
+    "to": "schema-v2",
+    "type": "REQUIRES_SCHEMA",
+    "checkout_version": 2
+  },
+  "checkout-schema-v1": {
+    "from": "checkout",
+    "to": "schema-v1",
+    "type": "REQUIRES_SCHEMA",
+    "checkout_version": 1
+  },
+  "checkout-shopping": {
+    "from": "checkout",
+    "to": "shopping",
+    "type": "SUPPORTS"
+  },
+  "billing-invoicing": {
+    "from": "billing",
+    "to": "invoicing",
+    "type": "SUPPORTS"
+  },
+  "shopping-shoppers": {
+    "from": "shopping",
+    "to": "shoppers",
+    "type": "USED_BY"
+  },
+  "invoicing-merchants": {
+    "from": "invoicing",
+    "to": "merchants",
+    "type": "USED_BY"
+  },
+  "checkout-policy-recommendations": {
+    "from": "checkout",
+    "to": "policy-recommendations",
+    "type": "GOVERNED_BY"
+  },
+  "maya-checkout": {
+    "from": "maya",
+    "to": "checkout",
+    "type": "OWNS"
+  },
+  "leo-data": {
+    "from": "leo",
+    "to": "data",
+    "type": "OWNS"
+  },
+  "runbook-checkout-checkout": {
+    "from": "runbook-checkout",
+    "to": "checkout",
+    "type": "DOCUMENTS"
+  },
+  "commerce-team": {
+    "label": "Team",
+    "name": "Commerce engineering",
+    "x": -170,
+    "y": -100
+  },
+  "platform-team": {
+    "label": "Team",
+    "name": "Platform engineering",
+    "x": 900,
+    "y": 150
+  },
+  "checkout-resilience": {
+    "label": "Project",
+    "name": "Checkout resilience",
+    "x": -170,
+    "y": -260
+  },
+  "ticket-inc-218": {
+    "label": "Document",
+    "kind": "ticket",
+    "name": "INC-218 \u00b7 Orders stall",
+    "text": "Ticket INC-218: checkout requests stall when recommendations time out. Project Checkout resilience. Maya owns checkout; Leo maintains shared data. Restore orders without interrupting merchant invoices.",
+    "x": -410,
+    "y": -260
+  },
+  "chat-commerce-42": {
+    "label": "Document",
+    "kind": "chat",
+    "name": "#commerce \u00b7 Fallback agreement",
+    "text": "Maya: recommendations are optional in checkout. Use graceful fallback if that dependency is unavailable. Leo: do not restart shared data casually; billing uses the same data service. Decision ADR-42 records this agreement.",
+    "x": -410,
+    "y": -100
+  },
+  "adr-42-source": {
+    "label": "Document",
+    "kind": "decision",
+    "name": "ADR-42 \u00b7 Optional recommendations",
+    "text": "ADR-42: Commerce approves optional recommendations and graceful fallback. The service owner is Maya. A newer mandatory-recommendations policy supersedes this agreement; always check the current decision.",
+    "x": 900,
+    "y": -240
+  },
+  "decision-42": {
+    "label": "Decision",
+    "name": "ADR-42 \u00b7 Fallback permitted",
+    "current": true,
+    "required": false,
+    "revision": 1,
+    "x": 900,
+    "y": -80
+  },
+  "repair-rollback": {
+    "label": "Repair",
+    "name": "Roll back checkout",
+    "action": "rollback_checkout",
+    "enabled": true,
+    "x": 100,
+    "y": -420
+  },
+  "repair-restart": {
+    "label": "Repair",
+    "name": "Restart shared data",
+    "action": "restart_data",
+    "enabled": true,
+    "x": 380,
+    "y": -420
+  },
+  "repair-fallback": {
+    "label": "Repair",
+    "name": "Enable graceful fallback",
+    "action": "enable_fallback",
+    "enabled": true,
+    "x": 650,
+    "y": -420
+  },
+  "maya-commerce-team": {
+    "from": "maya",
+    "to": "commerce-team",
+    "type": "MEMBER_OF"
+  },
+  "leo-platform-team": {
+    "from": "leo",
+    "to": "platform-team",
+    "type": "MEMBER_OF"
+  },
+  "checkout-resilience-checkout": {
+    "from": "checkout-resilience",
+    "to": "checkout",
+    "type": "INCLUDES"
+  },
+  "commerce-team-checkout-resilience": {
+    "from": "commerce-team",
+    "to": "checkout-resilience",
+    "type": "LEADS"
+  },
+  "ticket-inc-218-checkout": {
+    "from": "ticket-inc-218",
+    "to": "checkout",
+    "type": "DOCUMENTS"
+  },
+  "ticket-inc-218-checkout-resilience": {
+    "from": "ticket-inc-218",
+    "to": "checkout-resilience",
+    "type": "TRACKS"
+  },
+  "chat-commerce-42-checkout": {
+    "from": "chat-commerce-42",
+    "to": "checkout",
+    "type": "DOCUMENTS"
+  },
+  "maya-chat-commerce-42": {
+    "from": "maya",
+    "to": "chat-commerce-42",
+    "type": "AUTHORED"
+  },
+  "adr-42-source-checkout": {
+    "from": "adr-42-source",
+    "to": "checkout",
+    "type": "DOCUMENTS"
+  },
+  "decision-42-adr-42-source": {
+    "from": "decision-42",
+    "to": "adr-42-source",
+    "type": "CITES"
+  },
+  "decision-42-chat-commerce-42": {
+    "from": "decision-42",
+    "to": "chat-commerce-42",
+    "type": "CITES"
+  },
+  "decision-42-policy-recommendations": {
+    "from": "decision-42",
+    "to": "policy-recommendations",
+    "type": "ESTABLISHES"
+  },
+  "maya-decision-42": {
+    "from": "maya",
+    "to": "decision-42",
+    "type": "APPROVED"
+  },
+  "decision-42-checkout-resilience": {
+    "from": "decision-42",
+    "to": "checkout-resilience",
+    "type": "AFFECTS"
+  },
+  "runbook-checkout-repair-rollback": {
+    "from": "runbook-checkout",
+    "to": "repair-rollback",
+    "type": "SUGGESTS"
+  },
+  "runbook-checkout-repair-restart": {
+    "from": "runbook-checkout",
+    "to": "repair-restart",
+    "type": "SUGGESTS"
+  },
+  "runbook-checkout-repair-fallback": {
+    "from": "runbook-checkout",
+    "to": "repair-fallback",
+    "type": "SUGGESTS"
+  },
+  "repair-rollback-checkout": {
+    "from": "repair-rollback",
+    "to": "checkout",
+    "type": "TARGETS"
+  },
+  "repair-restart-data": {
+    "from": "repair-restart",
+    "to": "data",
+    "type": "TARGETS"
+  },
+  "repair-fallback-checkout": {
+    "from": "repair-fallback",
+    "to": "checkout",
+    "type": "TARGETS"
+  },
+  "deployment-481": {
+    "label": "Deployment",
+    "name": "DEP-481 \u00b7 Checkout v2",
+    "version": 2,
+    "active": true,
+    "x": 1150,
+    "y": 100
+  },
+  "migration-orders-v2": {
+    "label": "Migration",
+    "name": "Orders schema migration v2",
+    "backward_compatible": false,
+    "x": 1150,
+    "y": 280
+  },
+  "deployment-481-source": {
+    "label": "Document",
+    "kind": "deployment",
+    "name": "DEP-481 \u00b7 Release approval",
+    "text": "DEP-481 deployed checkout v2 for project Checkout resilience. Maya approved the deployment. Commerce engineering delivered it. The orders-v2 migration replaced schema v1 with schema v2 and is not backward compatible. Rolling the checkout process back to v1 cannot reverse that database migration. Ticket INC-218 follows this deployment.",
+    "x": 1150,
+    "y": -80
+  },
+  "deployment-481-checkout": {
+    "from": "deployment-481",
+    "type": "DEPLOYS",
+    "to": "checkout"
+  },
+  "deployment-481-migration-orders-v2": {
+    "from": "deployment-481",
+    "type": "APPLIES",
+    "to": "migration-orders-v2"
+  },
+  "migration-orders-v2-schema-v2": {
+    "from": "migration-orders-v2",
+    "type": "PRODUCES",
+    "to": "schema-v2"
+  },
+  "schema-v2-schema-v1": {
+    "from": "schema-v2",
+    "type": "SUPERSEDES",
+    "to": "schema-v1"
+  },
+  "maya-deployment-481": {
+    "from": "maya",
+    "type": "APPROVED",
+    "to": "deployment-481"
+  },
+  "commerce-team-deployment-481": {
+    "from": "commerce-team",
+    "type": "DELIVERED",
+    "to": "deployment-481"
+  },
+  "deployment-481-checkout-resilience": {
+    "from": "deployment-481",
+    "type": "PART_OF",
+    "to": "checkout-resilience"
+  },
+  "deployment-481-deployment-481-source": {
+    "from": "deployment-481",
+    "type": "CITES",
+    "to": "deployment-481-source"
+  },
+  "deployment-481-source-checkout": {
+    "from": "deployment-481-source",
+    "type": "DOCUMENTS",
+    "to": "checkout"
+  },
+  "ticket-inc-218-deployment-481": {
+    "from": "ticket-inc-218",
+    "type": "FOLLOWS",
+    "to": "deployment-481"
+  }
+}

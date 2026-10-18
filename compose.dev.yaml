@@ -1,0 +1,15 @@
+# Optional loopback-only ports for host-side development and integration tests.
+services:
+  falkordb:
+    ports: ["127.0.0.1:16379:6379"]
+  main:
+    ports: ["127.0.0.1:9100:9000"]
+  rollback:
+    ports: ["127.0.0.1:9200:9000"]
+  restart:
+    ports: ["127.0.0.1:9300:9000"]
+  fallback:
+    ports: ["127.0.0.1:9400:9000"]
+networks:
+  private:
+    internal: false
