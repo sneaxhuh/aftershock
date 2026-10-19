@@ -6,6 +6,12 @@ AFTERSHOCK investigates a failing miniature commerce company, forks its FalkorDB
 
 The graph determines the candidate set: connected runbooks suggest repair nodes, and current owner-approved project decisions determine whether a bypass is permitted. Agents discover and call real MCP tools to retrieve this context. Verified recoveries become reusable procedures with explicit preconditions, rather than just a transcript of the last incident.
 
+**[Watch the demo on YouTube](https://www.youtube.com/watch?v=2ulhyU0_OrA&t=110s)**
+
+![AFTERSHOCK incident console showing service health, the dependency graph, and persisted agent activity.](docs/images/01-incident-command.png)
+
+*The second incident: a changed company policy blocks the previously successful repair, while Billing remains healthy.*
+
 ## FalkorDB at the center
 
 | Capability | What it changes in AFTERSHOCK |
