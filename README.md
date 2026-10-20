@@ -109,3 +109,6 @@ The investigator retrieves evidence and proposes interventions; the coordinator 
 The MCP server exposes seven bounded read tools. The controller discovers their schemas through `list_tools` and invokes them over stdio. Action proposals and execution remain validated controller operations. Tools cannot accept arbitrary Cypher, shell commands, or another run's graph name. See [MCP tools and connection](docs/mcp.md).
 
 Task leases, handoffs, observations and events persist in FalkorDB. Startup resumes an interrupted investigation; another controller can reclaim a task after its 90-second lease expires. Application keys prevent duplicate completed repairs. The supplied successful action is an idempotent fallback setting.
+
+## AI Disclosure
+AI tools, including Codex, assisted with implementation, debugging, interface design, testing, and documentation. I directed the project, reviewed the generated work, and understand the architecture, graph model, and code. Gemini powers the agents during live investigations.
